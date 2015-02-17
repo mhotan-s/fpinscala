@@ -47,9 +47,14 @@ object List { // `List` companion object. Contains functions for creating and wo
     foldRight(ns, 1.0)(_ * _) // `_ * _` is more concise notation for `(x,y) => x * y`; see sidebar
 
 
+  /**
+   * Returns the tail of the list.
+   *
+   * @param l
+   * @tparam A
+   * @return
+   */
   def tail[A](l: List[A]): List[A] = {
-//    Currently returning Nil for an already Nil list
-//    Matching any
     l match {
       case Nil => Nil
       case Cons(_, t) => t
@@ -85,13 +90,57 @@ object List { // `List` companion object. Contains functions for creating and wo
     }
   }
 
-  def dropWhile[A](l: List[A], f: A => Boolean): List[A] = sys.error("todo")
+  /**
+   * Method that drops the head of the list as long as it meets a certain condition.
+   *
+   * @param l The list to attempt to remove.
+   * @param f The function that validates the head of the list
+   * @tparam A The type of the elements of the list
+   * @return The Resulting list.
+   */
+  def dropWhile[A](l: List[A], f: A => Boolean): List[A] = {
+    l match {
+      case Cons(h, t) if f(h) => dropWhile(t, f)
+      case _ => l
+    }
+  }
 
-  def init[A](l: List[A]): List[A] = sys.error("todo")
+  /**
+   * Returns a list with
+   *
+   * @param l
+   * @tparam A
+   * @return
+   */
+  def init[A](l: List[A]): List[A] = l match {
+    case Nil => Nil
+    case Cons(_, Nil) => Nil
+    case Cons(h, t) => Cons(h, init(t))
+  }
 
-  def length[A](l: List[A]): Int = sys.error("todo")
+  /**
+   * Uses fold right to
+   *
+   * @param l
+   * @tparam A
+   * @return
+   */
+  def length[A](l: List[A]): Int = {
+//    acc -> Accumulator.
+    foldRight(l, 0)((_, acc) => acc + 1)
+  }
 
-  def foldLeft[A,B](l: List[A], z: B)(f: (B, A) => B): B = sys.error("todo")
+  @annotation.tailrec
+  def foldLeft[A,B](l: List[A], z: B)(f: (B, A) => B): B = l match {
+    case Nil => z
+    case Cons(h,t) => foldLeft(t, f(z, h))(f)
+  }
+
+  def sum3(l: List[Int]): Int = foldLeft(l, 0)(_+_)
+  def product3(l: List[Int]): Double = foldLeft(l, 1.0)(_*_)
+  def length2[A](l: List[A]): Int = {
+    foldLeft(l, 0)((acc, h) => acc + 1)
+  }
 
   def map[A,B](l: List[A])(f: A => B): List[B] = sys.error("todo")
 }
